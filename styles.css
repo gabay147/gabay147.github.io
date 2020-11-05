@@ -6,6 +6,13 @@ h1 {
   color: black;
   text-align: center;
   font-style: comic-sans;
+  font-size: 30px;
+}
+
+h2 {
+  color: black;
+  text-align: center;
+  font-size: 25px;
 }
 
 p {
