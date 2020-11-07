@@ -1,6 +1,12 @@
  <!DOCTYPE html>
 <html>
-<title>Home of Jon Gabay</title>
+    <head>
+        <title>Home of Jon Gabay</title>
+        <meta charset="utf-8"/>
+        <script></script>
+    </head>
+
+
 <body>
 
 <h1>Welcome!</h1>
@@ -9,6 +15,59 @@
 <h3><a href="https://twitter.com/gabay147?s=09">Twitter (@gabay147)</a></h3>
 <h3><a href="https://www.youtube.com/channel/UCoGNcPd-5uJZn1pnJGU_XBQ">YouTube</a></h3>
 
+<canvas id="c">
+
+</canvas>
+
+<script type="module">
+    import * as THREE from './External/three.js/build/three.module.js';
+
+    function main() {
+        const canvas = document.querySelector('#c');
+        const renderer = new THREE.WebGLRenderer({canvas});
+        const fov = 75;
+        const aspect = 2;  // the canvas default
+        const near = 0.1;
+        const far = 5;
+        const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
+
+        camera.position.z = 2;
+
+        const scene = new THREE.Scene();
+        const boxWidth = 1;
+        const boxHeight = 1;
+        const boxDepth = 1;
+        const geometry = new THREE.BoxGeometry(boxWidth, boxHeight, boxDepth);
+
+        const material = new THREE.MeshPhongMaterial({color: 0x44aa88});
+
+        const cube = new THREE.Mesh(geometry, material);
+        scene.add(cube);
+        
+        {
+            const color = 0xFFFFFF;
+            const intensity = 1;
+            const light = new THREE.DirectionalLight(color, intensity);
+            light.position.set(-1, 2, 4);
+            scene.add(light);
+        }
+
+        renderer.render(scene, camera);
+
+        function render(time) {
+            time *= 0.001;
+
+            cube.rotation.x = time;
+            cube.rotation.y = time;
+
+            renderer.render(scene, camera);
+
+            requestAnimationFrame(render);
+        }
+        requestAnimationFrame(render);
+    }
+    main();
+</script>
 
 </body>
 </html> 
