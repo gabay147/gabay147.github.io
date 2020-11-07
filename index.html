@@ -4,16 +4,17 @@
         <title>Home of Jon Gabay</title>
         <meta charset="utf-8"/>
         <script></script>
+        <link rel="stylesheet" href="styles.css">
     </head>
 
 
 <body>
 
-<h1>Welcome!</h1>
+<!--<h1>Welcome!</h1>
 <p>I dont have much locally-hosted, currently, but please take some time to check out some of my social media!</p>
 <h3><a href="https://g-meister.artstation.com">ArtStation</a></h3>
 <h3><a href="https://twitter.com/gabay147?s=09">Twitter (@gabay147)</a></h3>
-<h3><a href="https://www.youtube.com/channel/UCoGNcPd-5uJZn1pnJGU_XBQ">YouTube</a></h3>
+<h3><a href="https://www.youtube.com/channel/UCoGNcPd-5uJZn1pnJGU_XBQ">YouTube</a></h3>-->
 
 <canvas id="c">
 
@@ -23,6 +24,71 @@
     import * as THREE from './External/three.js/build/three.module.js';
 
     function main() {
+        const scene = new THREE.Scene();
+        
+        //Box setup
+        const boxWidth = 1;
+        const boxHeight = 1;
+        const boxDepth = 1;
+        const geometry = new THREE.BoxGeometry(boxWidth, boxHeight, boxDepth);
+        const material = new THREE.MeshBasicMaterial({color: 0x44aa88});
+        material.transparent = true;
+        material.opacity = 0.3;
+        const cube = new THREE.Mesh(geometry, material);
+        scene.add(cube);
+
+        //TextLoader
+        const textArray = [
+            "About",
+            "Twitter",
+            "Portfolio",
+            "Resume",
+            "Instagram",
+            "Youtube"
+        ]
+        const position = [
+            [0,0,0.5],
+            [0,0,-0.5],
+            [0,0.5,0],
+            [0,-0.5,0],
+            [0.5,0,0],
+            [-0.5,0,0]
+        ]
+        const emptyObj = [
+            new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.1, 0.1)),
+            new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.1, 0.1)),
+            new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.1, 0.1)),
+            new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.1, 0.1)),
+            new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.1, 0.1)),
+            new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.1, 0.1)),
+        ]
+        const textMeshArray = [];
+
+        for (let i = 0; i < textArray.length; i++) {
+            emptyObj[i].position.x = position[i][0];
+            emptyObj[i].position.y = position[i][1];
+            emptyObj[i].position.z = position[i][2];
+
+            const loader = new THREE.FontLoader();
+            loader.load('./External/three.js/examples/fonts/helvetiker_regular.typeface.json', (font) => {
+            const text = textArray[i];
+            const textGeo = new THREE.TextBufferGeometry(text, {
+                font: font,
+                size: 0.1,
+                height: 0.05,
+                curveSegments: 12,
+                bevelEnabled: false,
+            });
+            const textObj = new THREE.Mesh(textGeo, material);
+            
+            textMeshArray.push(textObj);
+
+            scene.add(textObj);
+            cube.add(emptyObj[i]);
+            });
+        }
+        
+        //Camera Setup
         const canvas = document.querySelector('#c');
         const renderer = new THREE.WebGLRenderer({canvas});
         const fov = 75;
@@ -30,20 +96,8 @@
         const near = 0.1;
         const far = 5;
         const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-
         camera.position.z = 2;
 
-        const scene = new THREE.Scene();
-        const boxWidth = 1;
-        const boxHeight = 1;
-        const boxDepth = 1;
-        const geometry = new THREE.BoxGeometry(boxWidth, boxHeight, boxDepth);
-
-        const material = new THREE.MeshPhongMaterial({color: 0x44aa88});
-
-        const cube = new THREE.Mesh(geometry, material);
-        scene.add(cube);
-        
         {
             const color = 0xFFFFFF;
             const intensity = 1;
@@ -54,11 +108,41 @@
 
         renderer.render(scene, camera);
 
+        function resizeRendererToDisplaySize(renderer) {
+            const canvas = renderer.domElement;
+            const width = canvas.clientWidth;
+            const height = canvas.clientHeight;
+            const needResize = canvas.width !== width || canvas.height !== height;
+            if (needResize) {
+                renderer.setSize(width, height, false);
+            }
+            return needResize;
+        }
+
         function render(time) {
             time *= 0.001;
 
+            if (resizeRendererToDisplaySize(renderer)) {
+                const canvas = renderer.domElement;
+                camera.aspect = canvas.clientWidth / canvas.clientHeight;
+                camera.updateProjectionMatrix();
+            }
+
+            //TODO:
+            //Rotate cube by click/drag on the canvas
             cube.rotation.x = time;
             cube.rotation.y = time;
+            var temp = new THREE.Vector3();
+            for (let i = 0; i < textMeshArray.length; i++) {
+                //console.log("Set Position");
+                textMeshArray[i].position.setFromMatrixPosition(cube.children[i].matrixWorld);
+                cube.children[i].getWorldPosition(temp);
+                temp.x *= 2.0;
+                temp.y *= 2.0;
+                temp.z *= 2.0;
+                textMeshArray[i].lookAt(temp);
+
+            }
 
             renderer.render(scene, camera);
 
