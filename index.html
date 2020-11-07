@@ -141,7 +141,7 @@
                 temp.y *= 2.0;
                 temp.z *= 2.0;
                 textMeshArray[i].lookAt(temp);
-
+                textMeshArray[i].rotation.z = cube.rotation.z;
             }
 
             renderer.render(scene, camera);
