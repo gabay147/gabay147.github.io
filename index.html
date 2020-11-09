@@ -22,73 +22,21 @@
 
 <script type="module">
     import * as THREE from './External/three.js/build/three.module.js';
+    import {OrbitControls} from 'https://threejsfundamentals.org/threejs/resources/threejs/r122/examples/jsm/controls/OrbitControls.js';
+
+    var cube;
+    var controls;
+    var timeOut;
+    var clickTimeout;
+    var clickFunction = null;
+    var raycastFunction = null;
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
 
     function main() {
         const scene = new THREE.Scene();
-        
-        //Box setup
-        const boxWidth = 1;
-        const boxHeight = 1;
-        const boxDepth = 1;
-        const geometry = new THREE.BoxGeometry(boxWidth, boxHeight, boxDepth);
-        const material = new THREE.MeshBasicMaterial({color: 0x44aa88});
-        material.transparent = true;
-        material.opacity = 0.3;
-        const cube = new THREE.Mesh(geometry, material);
-        scene.add(cube);
 
-        //TextLoader
-        const textArray = [
-            "About",
-            "Twitter",
-            "Portfolio",
-            "Resume",
-            "Instagram",
-            "Youtube"
-        ]
-        const position = [
-            [0,0,0.5],
-            [0,0,-0.5],
-            [0,0.5,0],
-            [0,-0.5,0],
-            [0.5,0,0],
-            [-0.5,0,0]
-        ]
-        const emptyObj = [
-            new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.1, 0.1)),
-            new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.1, 0.1)),
-            new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.1, 0.1)),
-            new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.1, 0.1)),
-            new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.1, 0.1)),
-            new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.1, 0.1)),
-        ]
-        const textMeshArray = [];
-
-        for (let i = 0; i < textArray.length; i++) {
-            emptyObj[i].position.x = position[i][0];
-            emptyObj[i].position.y = position[i][1];
-            emptyObj[i].position.z = position[i][2];
-
-            const loader = new THREE.FontLoader();
-            loader.load('./External/three.js/examples/fonts/helvetiker_regular.typeface.json', (font) => {
-            const text = textArray[i];
-            const textGeo = new THREE.TextBufferGeometry(text, {
-                font: font,
-                size: 0.1,
-                height: 0.05,
-                curveSegments: 12,
-                bevelEnabled: false,
-            });
-            const textObj = new THREE.Mesh(textGeo, material);
-            
-            textMeshArray.push(textObj);
-
-            scene.add(textObj);
-            cube.add(emptyObj[i]);
-            });
-        }
-        
-        //Camera Setup
+        ///Camera Setup
         const canvas = document.querySelector('#c');
         const renderer = new THREE.WebGLRenderer({canvas});
         const fov = 75;
@@ -98,6 +46,14 @@
         const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
         camera.position.z = 2;
 
+        controls = new OrbitControls(camera, canvas);
+        controls.enableKeys = false;
+        controls.target.set(0, 0, 0);
+        controls.autoRotate = true;
+        controls.enableDamping = true;
+
+
+        //setup light
         {
             const color = 0xFFFFFF;
             const intensity = 1;
@@ -105,9 +61,84 @@
             light.position.set(-1, 2, 4);
             scene.add(light);
         }
+        
+        ///Main Box setup
+        const boxSideLength = .9;
+        const geometry = new THREE.BoxGeometry(boxSideLength, boxSideLength, boxSideLength);
+        const material = new THREE.MeshBasicMaterial({color: 0x44aa88});
+        material.transparent = true;
+        material.opacity = 0.3;
+        cube = new THREE.Mesh(geometry, material);
+        cube.name = "temp";
+        scene.add(cube);
 
-        renderer.render(scene, camera);
+        ///TextLoader
+        ///Loads textures and generates the heirarchy for cubes and planes
+        ///Base cube
+        /// > Placeholder Cubes (x6) - sets the position to store the planes
+        ///   > Texture Plane - inheret position of the cube
+        const textArray = [
+            "About",
+            "Twitter",
+            "Portfolio",
+            "Resume",
+            "Instagram",
+            "Youtube"
+        ]
+        //Defines the position where the placeholder cubes will be in relation to the parent object
+        const position = [
+            [0,0,0.5],
+            [0,0,-0.5],
+            [0,0.5,0],
+            [0,-0.5,0],
+            [0.5,0,0],
+            [-0.5,0,0]
+        ]
+        //loads textures into memory
+        const textures = [
+            new THREE.TextureLoader().load('img/aboutText.png'),
+            new THREE.TextureLoader().load('img/twitterText.png'),
+            new THREE.TextureLoader().load('img/portfolioText.png'),
+            new THREE.TextureLoader().load('img/youTubeText.png'),
+            new THREE.TextureLoader().load('img/twitterText.png'),
+            new THREE.TextureLoader().load('img/twitterText.png')
+        ]
+        //Placeholder boxes for heirarchy
+        /*const emptyObj = [
+            new THREE.Mesh(new THREE.BoxGeometry(0.01, 0.01, 0.01), new THREE.MeshBasicMaterial({transparent: true, opacity: 0})),
+            new THREE.Mesh(new THREE.BoxGeometry(0.01, 0.01, 0.01), new THREE.MeshBasicMaterial({transparent: true, opacity: 0})),
+            new THREE.Mesh(new THREE.BoxGeometry(0.01, 0.01, 0.01), new THREE.MeshBasicMaterial({transparent: true, opacity: 0})),
+            new THREE.Mesh(new THREE.BoxGeometry(0.01, 0.01, 0.01), new THREE.MeshBasicMaterial({transparent: true, opacity: 0})),
+            new THREE.Mesh(new THREE.BoxGeometry(0.01, 0.01, 0.01), new THREE.MeshBasicMaterial({transparent: true, opacity: 0})),
+            new THREE.Mesh(new THREE.BoxGeometry(0.01, 0.01, 0.01), new THREE.MeshBasicMaterial({transparent: true, opacity: 0})),
+        ]*/
+        //Storage location for plane objects
+        const planeMeshes = [];
+        
+        ///Generate the cube object
+        ///For each obj in textures, 
+        for (let i = 0; i < textures.length; i++) {
+            
+            //set material for the planes by the corresponding texture loaded into textures[]
+            const textMaterial = new THREE.MeshBasicMaterial({ map: textures[i], transparent: true, opacity: 0.9 });
+            
+            //generate the plane (size 1,1) with texture textMaterial
+            const plane = new THREE.Mesh(new THREE.PlaneBufferGeometry(1,1), textMaterial);
+            console.log("Set name to: " + textArray[i]);
+            plane.name = textArray[i];
+            plane.position.x = position[i][0];
+            plane.position.y = position[i][1];
+            plane.position.z = position[i][2];
+            
+            
+            //add plane to planeMeshes
+            planeMeshes.push(plane);
 
+            //add the plane to the scene for rendering
+            cube.add(plane);
+        }
+        
+        ///Responsive Display
         function resizeRendererToDisplaySize(renderer) {
             const canvas = renderer.domElement;
             const width = canvas.clientWidth;
@@ -119,37 +150,118 @@
             return needResize;
         }
 
+        //Detects if the mouse moves
+        function onMouseDown( event ) {
+
+            clickFunction = function() {
+                console.log(raycaster);
+                console.log(cube.children);
+                raycaster.setFromCamera(mouse, camera);
+                const intersects = raycaster.intersectObjects( cube.children );
+                console.log(intersects);
+                if (intersects[0]) {
+                    console.log(intersects[0].object.name);
+                    switch(intersects[0].object.name) {
+                        case "About":
+                            //window.open("")
+                            break;
+                        case "Twitter":
+                            window.open("https://twitter.com/gabay147", "_blank");
+                            break;
+                        case "Portfolio":
+                            window.open("https://g-meister.artstation.com/", "_blank");
+                            break;
+                        case "Resume":
+                            //window.open("https://twitter.com/gabay147", "_blank");
+                            break;
+                        case "Instagram":
+                            //window.open("https://twitter.com/gabay147", "_blank");
+                            break;
+                        case "YouTube":
+                            //window.open("https://twitter.com/gabay147", "_blank");
+                            break;
+                    }
+                }
+            };
+            clickTimeout = setTimeout(function(){clickFunction = null;}, 250);
+
+            //clearTimeout
+            mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+	        mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+            clearTimeout(timeOut);
+            //disable autorotate
+            controls.autoRotate = false;
+        }
+
+        function onMouseUp( event ) {
+            clearTimeout(timeOut);
+            clearTimeout(clickTimeout);
+            if (clickFunction !== null) {
+                clickFunction();
+            }
+            timeOut = setTimeout(function(){ controls.autoRotate = true; }, 3000);
+
+            //TODO:
+        }
+
+        ///Render loop
         function render(time) {
             time *= 0.001;
 
+            //camera control update
+            controls.update();
+
+            //resize display to fit device
             if (resizeRendererToDisplaySize(renderer)) {
                 const canvas = renderer.domElement;
                 camera.aspect = canvas.clientWidth / canvas.clientHeight;
                 camera.updateProjectionMatrix();
             }
 
-            //TODO:
-            //Rotate cube by click/drag on the canvas
-            cube.rotation.x = time;
-            cube.rotation.y = time;
+
+
+            //auto-rotate cube
+            //cube.rotation.x = time * 0.3;
+            //cube.rotation.y = time * 0.5;
+            //cube.rotation.z = time * 0.6;
+
+            //
             var temp = new THREE.Vector3();
-            for (let i = 0; i < textMeshArray.length; i++) {
-                //console.log("Set Position");
-                textMeshArray[i].position.setFromMatrixPosition(cube.children[i].matrixWorld);
+            for (let i = 0; i < planeMeshes.length; i++) {
+                //determine the location to point to make the faces
+                // 1) face away from the center of the cube
+                // 2) rotate to maintain "level"
                 cube.children[i].getWorldPosition(temp);
                 temp.x *= 2.0;
                 temp.y *= 2.0;
                 temp.z *= 2.0;
-                textMeshArray[i].lookAt(temp);
-                textMeshArray[i].rotation.z = cube.rotation.z;
+                planeMeshes[i].lookAt(temp);
+                planeMeshes[i].rotation.z = cube.rotation.z;
+                
+            }
+
+            ///Responsive Display
+            function resizeRendererToDisplaySize(renderer) {
+                const canvas = renderer.domElement;
+                const width = canvas.clientWidth;
+                const height = canvas.clientHeight;
+                const needResize = canvas.width !== width || canvas.height !== height;
+                if (needResize) {
+                    renderer.setSize(width, height, false);
+                }
+                return needResize;
             }
 
             renderer.render(scene, camera);
 
             requestAnimationFrame(render);
         }
+        window.addEventListener( "pointerdown", onMouseDown, false );
+        window.addEventListener( "pointerup", onMouseUp, false );
         requestAnimationFrame(render);
     }
+
+    //run main loop
     main();
 </script>
 
