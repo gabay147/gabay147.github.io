@@ -1,269 +1,70 @@
  <!DOCTYPE html>
 <html>
     <head>
-        <title>Home of Jon Gabay</title>
-        <meta charset="utf-8"/>
+        <title>Jon Gabay</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" charset="utf-8"/>
         <script></script>
         <link rel="stylesheet" href="styles.css">
     </head>
 
-
-<body>
-
-<!--<h1>Welcome!</h1>
-<p>I dont have much locally-hosted, currently, but please take some time to check out some of my social media!</p>
-<h3><a href="https://g-meister.artstation.com">ArtStation</a></h3>
-<h3><a href="https://twitter.com/gabay147?s=09">Twitter (@gabay147)</a></h3>
-<h3><a href="https://www.youtube.com/channel/UCoGNcPd-5uJZn1pnJGU_XBQ">YouTube</a></h3>-->
-
-<canvas id="c">
-
-</canvas>
-
-<script type="module">
-    import * as THREE from './External/three.js/build/three.module.js';
-    import {OrbitControls} from 'https://threejsfundamentals.org/threejs/resources/threejs/r122/examples/jsm/controls/OrbitControls.js';
-
-    var cube;
-    var controls;
-    var timeOut;
-    var clickTimeout;
-    var clickFunction = null;
-    var raycastFunction = null;
-    const raycaster = new THREE.Raycaster();
-    const mouse = new THREE.Vector2();
-
-    function main() {
-        const scene = new THREE.Scene();
-
-        ///Camera Setup
-        const canvas = document.querySelector('#c');
-        const renderer = new THREE.WebGLRenderer({canvas});
-        const fov = 75;
-        const aspect = 2;  // the canvas default
-        const near = 0.1;
-        const far = 5;
-        const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-        camera.position.z = 2;
-
-        controls = new OrbitControls(camera, canvas);
-        controls.enableKeys = false;
-        controls.target.set(0, 0, 0);
-        controls.autoRotate = true;
-        controls.enableDamping = true;
-
-
-        //setup light
-        {
-            const color = 0xFFFFFF;
-            const intensity = 1;
-            const light = new THREE.DirectionalLight(color, intensity);
-            light.position.set(-1, 2, 4);
-            scene.add(light);
-        }
-        
-        ///Main Box setup
-        const boxSideLength = .9;
-        const geometry = new THREE.BoxGeometry(boxSideLength, boxSideLength, boxSideLength);
-        const material = new THREE.MeshBasicMaterial({color: 0x44aa88});
-        material.transparent = true;
-        material.opacity = 0.3;
-        cube = new THREE.Mesh(geometry, material);
-        cube.name = "temp";
-        scene.add(cube);
-
-        ///TextLoader
-        ///Loads textures and generates the heirarchy for cubes and planes
-        ///Base cube
-        /// > Placeholder Cubes (x6) - sets the position to store the planes
-        ///   > Texture Plane - inheret position of the cube
-        const textArray = [
-            "About",
-            "Twitter",
-            "Portfolio",
-            "tankTank",
-            "Instagram",
-            "YouTube"
-        ]
-        //Defines the position where the placeholder cubes will be in relation to the parent object
-        const position = [
-            [0,0,0.5],
-            [0,0,-0.5],
-            [0,0.5,0],
-            [0,-0.5,0],
-            [0.5,0,0],
-            [-0.5,0,0]
-        ]
-        //loads textures into memory
-        const textures = [
-            new THREE.TextureLoader().load('img/AboutText2.png'),
-            new THREE.TextureLoader().load('img/TwitterText2.png'),
-            new THREE.TextureLoader().load('img/PortfolioText2.png'),
-            new THREE.TextureLoader().load('img/TankTankText.png'),
-            new THREE.TextureLoader().load('img/InstagramText2.png'),
-            new THREE.TextureLoader().load('img/YouTubeText2.png')
-        ]
-        //Placeholder boxes for heirarchy
-        /*const emptyObj = [
-            new THREE.Mesh(new THREE.BoxGeometry(0.01, 0.01, 0.01), new THREE.MeshBasicMaterial({transparent: true, opacity: 0})),
-            new THREE.Mesh(new THREE.BoxGeometry(0.01, 0.01, 0.01), new THREE.MeshBasicMaterial({transparent: true, opacity: 0})),
-            new THREE.Mesh(new THREE.BoxGeometry(0.01, 0.01, 0.01), new THREE.MeshBasicMaterial({transparent: true, opacity: 0})),
-            new THREE.Mesh(new THREE.BoxGeometry(0.01, 0.01, 0.01), new THREE.MeshBasicMaterial({transparent: true, opacity: 0})),
-            new THREE.Mesh(new THREE.BoxGeometry(0.01, 0.01, 0.01), new THREE.MeshBasicMaterial({transparent: true, opacity: 0})),
-            new THREE.Mesh(new THREE.BoxGeometry(0.01, 0.01, 0.01), new THREE.MeshBasicMaterial({transparent: true, opacity: 0})),
-        ]*/
-        //Storage location for plane objects
-        const planeMeshes = [];
-        
-        ///Generate the cube object
-        ///For each obj in textures, 
-        for (let i = 0; i < textures.length; i++) {
-            
-            //set material for the planes by the corresponding texture loaded into textures[]
-            const textMaterial = new THREE.MeshBasicMaterial({ map: textures[i], transparent: true, opacity: 0.9 });
-            
-            //generate the plane (size 1,1) with texture textMaterial
-            const plane = new THREE.Mesh(new THREE.PlaneBufferGeometry(1,1), textMaterial);
-            console.log("Set name to: " + textArray[i]);
-            plane.name = textArray[i];
-            plane.position.x = position[i][0];
-            plane.position.y = position[i][1];
-            plane.position.z = position[i][2];
-            
-            
-            //add plane to planeMeshes
-            planeMeshes.push(plane);
-
-            //add the plane to the scene for rendering
-            cube.add(plane);
-        }
-        
-        ///Responsive Display
-        function resizeRendererToDisplaySize(renderer) {
-            const canvas = renderer.domElement;
-            const width = canvas.clientWidth;
-            const height = canvas.clientHeight;
-            const needResize = canvas.width !== width || canvas.height !== height;
-            if (needResize) {
-                renderer.setSize(width, height, false);
-            }
-            return needResize;
-        }
-
-        //Detects if the mouse moves
-        function onMouseDown( event ) {
-
-            clickFunction = function() {
-                console.log(raycaster);
-                console.log(cube.children);
-                raycaster.setFromCamera(mouse, camera);
-                const intersects = raycaster.intersectObjects( cube.children );
-                console.log(intersects);
-                if (intersects[0]) {
-                    console.log(intersects[0].object.name);
-                    switch(intersects[0].object.name) {
-                        case "About":
-                            window.open("about.html");
-                            break;
-                        case "Twitter":
-                            window.open("https://twitter.com/gabay147", "_blank");
-                            break;
-                        case "Portfolio":
-                            window.open("https://g-meister.artstation.com/", "_blank");
-                            break;
-                        case "tankTank":
-                            window.open("tanktank.html", "_blank");
-                            break;
-                        case "Instagram":
-                            window.open("https://www.instagram.com/deja.vu_art/", "_blank");
-                            break;
-                        case "YouTube":
-                            window.open("https://www.youtube.com/channel/UCoGNcPd-5uJZn1pnJGU_XBQ", "_blank");
-                            break;
-                    }
-                }
-            };
-            clickTimeout = setTimeout(function(){clickFunction = null;}, 250);
-
-            //clearTimeout
-            mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-	        mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-            clearTimeout(timeOut);
-            //disable autorotate
-            controls.autoRotate = false;
-        }
-
-        function onMouseUp( event ) {
-            clearTimeout(timeOut);
-            clearTimeout(clickTimeout);
-            if (clickFunction !== null) {
-                clickFunction();
-            }
-            timeOut = setTimeout(function(){ controls.autoRotate = true; }, 3000);
-
-            //TODO:
-        }
-
-        ///Render loop
-        function render(time) {
-            time *= 0.001;
-
-            //camera control update
-            controls.update();
-
-            //resize display to fit device
-            if (resizeRendererToDisplaySize(renderer)) {
-                const canvas = renderer.domElement;
-                camera.aspect = canvas.clientWidth / canvas.clientHeight;
-                camera.updateProjectionMatrix();
-            }
-
-
-
-            //auto-rotate cube
-            //cube.rotation.x = time * 0.3;
-            //cube.rotation.y = time * 0.5;
-            //cube.rotation.z = time * 0.6;
-
-            //
-            var temp = new THREE.Vector3();
-            for (let i = 0; i < planeMeshes.length; i++) {
-                //determine the location to point to make the faces
-                // 1) face away from the center of the cube
-                // 2) rotate to maintain "level"
-                cube.children[i].getWorldPosition(temp);
-                temp.x *= 2.0;
-                temp.y *= 2.0;
-                temp.z *= 2.0;
-                planeMeshes[i].lookAt(temp);
-                planeMeshes[i].rotation.z = cube.rotation.z;
+    <body>
+        <!--HEADER-->
+        <header class="row">
+            <!--LOGO-->
+            <div class="header">
+                <div id="header1">
+                    <div id="logo">
+                        <img src="img/JGAnchor.jpg">
+                    </div>
+                    <div id="name">
+                        <h1>Jon Gabay</h1>
+                    </div>
+                </div>
                 
-            }
+                
+            </div>
+            <div class="header nav">
+                <ul>
+                    <li>About</li>
+                    <li>Portfolio</li>
+                    <li>Contact</li>
+                    <li>Resume</li>
+                </ul>
+            </div>
+        </header>
 
-            ///Responsive Display
-            function resizeRendererToDisplaySize(renderer) {
-                const canvas = renderer.domElement;
-                const width = canvas.clientWidth;
-                const height = canvas.clientHeight;
-                const needResize = canvas.width !== width || canvas.height !== height;
-                if (needResize) {
-                    renderer.setSize(width, height, false);
-                }
-                return needResize;
-            }
+        <!--BODY-->
+        <div class="body"> 
+            <!--CONTENT-->
+            <div id="content">
+                <!--PORTRAIT-->
+                <div><img src="img/AboutText.png"></div>
+                <!--SOCIAL MEDIA LINKS-->
+                <div>
+                    <div><a href=""><img src="img/PortfolioText2.png"></a></div>
+                    <div><a href=""><img src="img/YouTubeText2.png"></a></div>
+                    <div><a href=""><img src="img/TwitterText2.png"></a></div>
+                    <div><a href=""><img src="img/InstagramText2.png"></a></div>
+                </div>
+                <!--CONTENT-->
+                <div>
+                    <p>
+                        Hello! I am Jon Gabay, and my professional summary should go here!
+                    </p>
+                </div>
+            </div>
+        </div>
 
-            renderer.render(scene, camera);
-
-            requestAnimationFrame(render);
-        }
-        window.addEventListener( "pointerdown", onMouseDown, false );
-        window.addEventListener( "pointerup", onMouseUp, false );
-        requestAnimationFrame(render);
-    }
-
-    //run main loop
-    main();
-</script>
-
-</body>
+        <!--FOOTER-->
+        <footer>
+            <!--LOGO-->
+            <div><img src="img/AboutText2.png"></div>
+            <!--CONTENT-->
+            <div>
+                <p>
+                    Copyright stuff
+                </p>
+            </div>
+        </footer>
+    </body>
 </html> 
