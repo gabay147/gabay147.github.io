@@ -1,125 +1,210 @@
-html {
-    font-family: "Lucida Sans", sans-serif;
-}
-
 * {
-    box-sizing: border-box;
+    box-sizing:border-box;
+    
 }
 
-img {
-    max-width: 100px;
+h1 {
+    font-size: 35px;
 }
 
-header {
-    width: 100%;
-    margin: auto;
-}
-
-.header {
-    background-color: #9933cc;
-    color: #ffffff;
-    padding: 15px;
-    align-content:center;
-    float:left;
-    width: 100%;
-}
-
-#header1 {
-    width: 80%;
-    margin:auto;
-}
-
-#logo {
-    float:left;
-}
-
-#name {
-    float:right;
-}
-
-footer {
-    background-color: #9933cc;
-    color: #ffffff;
-    padding: 15px;
+p {
+    font-size: 20px;
+    font-family:Verdana, Geneva, Tahoma, sans-serif
 }
 
 body {
-    width: 75%;
-    margin: auto;
-    background-color:burlywood;
+    width:92%;
+    max-width:960px;
+    margin:auto;
+    background-color:rgb(32, 43, 43);
 }
 
-#content{
-    width: 100%;
-    padding:15px;
-    background-color: white;
+header {
+    background-color:rgb(53, 77, 52);
+    margin:5px;
+}
+
+header .inner {
+    display:inline-block;
+    width:100%;
+    padding: 20px;
+}
+
+header .inner .logo {
+    display:inline-block;
+    width:20%;
+    border-radius:50%;
+    vertical-align: middle;
+}
+
+header .inner .text {
+    display:inline-block;
+    width:80%;
+    font-size: 60px;
+    font-weight: bold;
+    color:white;
+    vertical-align: middle;
+    text-align: right;
+    padding:5%;
+}
+
+.nav {
+    display:block;
 }
 
 .nav ul {
     list-style-type: none;
-    margin: 0;
+    display:block;
+    margin: 15px;
     padding: 0;
 }
 
 .nav li {
-    padding: 10px;
+    display:block;
+}
+
+.nav li a{
+    display:block;
+    padding: 15px;
+    margin-bottom:15px;
     width: 25%;
     float:left;
+
+    text-decoration: none;
     text-align:center;
-    background-color: #33b5e5;
-    color: #ffffff;
+    background-color: #73f37e;
+    color: #000000;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0,0,0,0.24);
 }
 
-.nav li:hover {
-    background-color: #0099cc;
+.nav li a:hover {
+    background-color: #00cc11;
 }
 
-.row::after {
-    content: "";
-    clear: both;
-    display: table;
+footer {
+    background-color:rgb(53, 77, 52);
+    margin-top:15px;
+    margin-left:5px;
+    margin-right:5px;
 }
 
-/*
-[class*="col-"] {
-    float: left;
-    padding: 15px;
-    border: 1px solid red;
+footer .inner {
+    display:inline-block;
+    width:100%;
+    padding: 20px;
 }
-.col-1 {
-    width: 8.33%;
+
+footer .inner .logo {
+    display:block;
+    margin:auto;
+    width:50px;
+    border-radius:50%;
 }
-.col-2 {
-    width: 16.66%;
+
+footer .inner .copyright {
+    text-align:center;
+    font-size:small;
+    color:white;
 }
-.col-3 {
-    width: 25%;
+
+.content {
+    display: block;
+    margin:5px;
 }
-.col-4 {
-    width: 33.33%;
+
+.left {
+    margin:0;
+    display:inline-block;
+    width:30%;
+    padding:10px;
+    border-radius:10px;
+    background-color:rgb(199, 199, 199,0.3)
 }
-.col-5 {
-    width: 41.66%;
+.portrait img {
+    display:inline-block;
+    border-radius:20%;
+    width:100%;
 }
-.col-6 {
-    width: 50%;
+
+.left a img{
+    display: inline-block;
+    margin:4%;
+    width:40%;
+    border-radius:50%;
 }
-.col-7 {
-    width: 58.33%;
+
+.right {
+    margin:0;
+    vertical-align:top;
+    display: inline-block;
+    width:69%;
+    height:100%;
+    padding:25px;
+    color:lightgray;
+    /*background-color:darkgoldenrod;*/
 }
-.col-8 {
-    width: 66.66%;
-}
-.col-9 {
-    width: 75%;
-}
-.col-10 {
-    width: 83.33%;
-}
-.col-11 {
-    width: 91.66%;
-}
-.col-12 {
+
+.post {
+    display: inline-block;
     width: 100%;
-}*/
+    background-color: rgb(256, 256, 256,0.4);
+    border-radius: 10px;
+    padding: 0px 30px 15px;
+    margin-bottom: 15px;
+}
+
+.post h1 {
+    text-align: center;
+}
+
+.post p {
+    display: inline-block;
+    vertical-align:middle;
+    padding-left:10px;
+}
+.post a {
+    font-style:italic;
+}
+
+.post img {
+    vertical-align:middle;
+    border-radius:50%;
+}
+
+.post div {
+    display: block;
+}
+
+.post .head {
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.post .head div {
+    display:inline-block;
+    margin:auto;
+    padding-top: 15px;
+}
+
+.post .head div img {
+    display: inline-block;
+    margin-left: auto;
+    margin-right: auto;
+}
+.post .head div p {
+    display:inline-block;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+.video-center {
+    display: block;
+    margin: 0 auto;
+}
+
+.post .resume {
+    margin-bottom:15px;
+    width:100%;
+    border-radius:10px;
+}
