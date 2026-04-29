@@ -1,15 +1,31 @@
 ---
-title: "What's Felix Up To?"
-listing:
-  contents: posts
-  sort: "date desc"
-  type: default
-  categories: true
-  sort-ui: false
-  filter-ui: false
-page-layout: full
-title-block-banner: true
+title: "Felix Gabay"
+image: profile.jpg
+about:
+  template: trestles
+  image: profile.jpg
+  image-shape: round
+  links: 
+    - icon: linkedin
+      text: LinkedIn
+      href: https://www.linkedin.com/in/felix-gabay/
+    - icon: github
+      text: Github
+      href: https://github.com/gabay147
 ---
 
-## Projects and Portfolio
+Felix Gabay is a data analyst from Lawrence, Kansas. A recent graduate of the University of Kansas, Felix earned his Bachelor's of Science in Behavioral Neuroscience with a data science certificate in May 2026.
 
+At home, Felix enjoys experimenting with a variety of artistic media and being cat dad to Phylla and Noni.
+
+## Education
+
+**University of Kansas** \| Lawrence, KS\
+B.S in Behavioral Neuroscience, Data Science Certificate \| Aug 2024 - May 2026
+
+**Johnson County Community College** \| Overland Park, KS \
+AAS in Game Art and Design \| Aug 2018 - May 2021
+
+## Experience
+
+Peruvian Connection \| Data Analytics Intern \| June 2025 - Dec 2025

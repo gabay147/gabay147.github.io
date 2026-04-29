@@ -1,0 +1,42 @@
+---
+title: "Can we predict rising unmet health need?"
+
+author:
+  - name: Felix G.
+    affiliation: University of Kansas - Community Data Labs
+  - name: Pradeep Kumar
+    affiliation: Industry Advisory Board
+  - name: William Duncan
+    affiliation: University of Kansas, KDSC
+
+date: 2026-04-26
+date-modified: 2026-04-28
+image: "disabledandhere-036.jpg"
+image-alt: "Photo by Chona Kasinger on https://affecttheverb.com/disabledandhere/"
+
+categories: [learning]
+# categories - Choose one per post
+#   - research
+#   - methods
+#   - learning
+#   - commentary
+#   - notes
+
+tags: [public-health, R, tidyverse, data-engineering, data-harmonization, ltertools, survey-data, panel-data, ml, classification, clustering, cross-validation]
+# tags - Choose many representative tags
+#   - Tools/Software
+#     R, Tidyverse, fixest, data.table, caret, ltertools, glmnet
+#   - Methods/Techniques
+#     regression, panel-data, ML, clustering, classification, inference
+#   - Data/Domain
+#     education, labor-markets, survey-data, public-health
+#   - Workflow/Practice
+#     reproducibility, data-engineering, data-cleaning, data-harmonization,
+#     pipelines, data-viz
+
+freeze: auto
+draft: true
+embed-resources: true
+---
+
+Adults with disabilities are vulnerable to their health needs being unmet.
