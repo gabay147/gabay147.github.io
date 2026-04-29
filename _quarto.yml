@@ -1,21 +1,30 @@
 project:
   type: website
-  output-dir: docs
 
 website:
-  title: "Felix Gabay"
+  title: "Welcome!"
   navbar:
     right:
-      - text: "About"
-        href: about.qmd
-      - icon: github
-        href: https://github.com/
-      - icon: file-earmark
-        href: resume.qmd
+      - href: index.qmd
+        text: Home
+      - href: blog.qmd
+        text: Blog
+      - text: Profiles
+        menu:
+          - href: https://github.com/gabay147
+            icon: github
+            text: GitHub
+          - href: https://www.linkedin.com/in/jon-gabay-40a568356/
+            icon: linkedin
+            text: LinkedIn
+  draft-mode: gone
 format:
   html:
-    theme: cosmo
+    theme:
+      dark: solar
+      light: cerulean
     css: styles.css
+    toc: true
 
 
 
