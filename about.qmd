@@ -1,0 +1,19 @@
+---
+title: "Felix Gabay"
+image: profile.jpg
+about:
+  template: jolla
+  links:
+    - icon: twitter
+      text: BSKY
+      href: https://felixgabay.bsky.social
+    - icon: linkedin
+      text: LinkedIn
+      href: https://www.linkedin.com/in/jon-gabay-40a568356/
+    - icon: github
+      text: Github
+      href: https://github.com/gabay147
+
+---
+
+Hi! I'm Felix Gabay, and I'm a behavioral neuroscience undergrad at the University of Kansas also pursuing a data science certificate. A research assistant at the [Affective Communication & Computing Lab (AffCom)](https://affcom.ku.edu), my research interests include interpersonal relationships and emotional regulation in persons with ADHD, ASD, and other forms of neurodivergence. My work includes data processing, data analytics, and statistical analysis.

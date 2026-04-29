@@ -1,0 +1,21 @@
+project:
+  type: website
+  output-dir: docs
+
+website:
+  title: "Felix Gabay"
+  navbar:
+    right:
+      - text: "About"
+        href: about.qmd
+      - icon: github
+        href: https://github.com/
+      - icon: file-earmark
+        href: resume.qmd
+format:
+  html:
+    theme: cosmo
+    css: styles.css
+
+
+
