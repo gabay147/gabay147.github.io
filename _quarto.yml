@@ -1,0 +1,32 @@
+project:
+  type: website
+
+include: [".nojekyll"]
+
+website:
+  title: "Welcome!"
+  navbar:
+    right:
+      - href: index.qmd
+        text: Home
+      - href: blog.qmd
+        text: Blog
+      - text: Profiles
+        menu:
+          - href: https://github.com/gabay147
+            icon: github
+            text: GitHub
+          - href: https://www.linkedin.com/in/felix-gabay/
+            icon: linkedin
+            text: LinkedIn
+  draft-mode: gone
+format:
+  html:
+    theme:
+      dark: solar
+      light: cerulean
+    css: styles.css
+    toc: true
+
+
+
