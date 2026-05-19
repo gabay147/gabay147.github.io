@@ -1,0 +1,12 @@
+format: 
+  html:
+    toc: true
+    toc-depth: 3
+    code-fold: show
+    code-summary: "Show code"
+    
+execute:
+  warning: false
+  message: false
+  
+freeze: auto
